@@ -1,0 +1,5 @@
+__pycache__
+arch
+results_fused
+*.sh
+*.out

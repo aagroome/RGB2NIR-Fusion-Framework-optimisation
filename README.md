@@ -11,18 +11,24 @@ The follwoing repository is based on the Pytorch implementation of LYT-Net which
 
 - Make Conda Environment
 
+If first time using conda run:
 ```bash
-conda  create  -n  LYT_Torch  python=3.9  -y
-conda  activate  LYT_Torch
+conda init
+```
+
+then
+```bash
+conda create -n LYT_Torch python=3.9 -y
+conda activate LYT_Torch
 ```
 
 - Install Dependencies
 
 ```bash
 
-conda  install  pytorch  torchvision  torchaudio  pytorch-cuda=11.8  -c  pytorch  -c  nvidia
-pip  install  matplotlib  scikit-learn  scikit-image  opencv-python  yacs  joblib  natsort  h5py  tqdm  tensorboard
-pip  install  einops  gdown  addict  future  lmdb  numpy  pyyaml  requests  scipy  yapf  lpips  thop  timm
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+pip install matplotlib scikit-learn scikit-image opencv-python yacs joblib natsort h5py tqdm tensorboard 
+pip install einops gdown addict future lmdb numpy pyyaml requests scipy yapf lpips thop timm torchmetrics
 
 ```
 
@@ -69,7 +75,7 @@ pip  install  einops  gdown  addict  future  lmdb  numpy  pyyaml  requests  scip
 
 ```bash
 
-python  train_fuse.py
+python train_fuse.py
 
 ```
 
@@ -78,14 +84,14 @@ python  train_fuse.py
 You can test the model using the following commands. Pre-trained weights are available at ```trained_weights``` folder.
 
 
-  
+
 
 ```bash
 
-python  test_fuse.py
+python test_fuse.py
 
 ```
 
-  
+
 
 **Note:** Please modify the dataset and trained weight paths in ```test_fuse.py``` as per your requirements.

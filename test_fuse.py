@@ -117,9 +117,9 @@ def validate_and_save(model, dataloader, device, result_dir, force_png=True, gt_
 # ============================================================
 def main():
     # ---- Paths
-    test_rgb = 'data/R-G-B-NIR/Wheat/Test/RGB'
-    test_nir_up = 'data/R-G-B-NIR/Wheat/Test/upscaled_images_32x'
-    test_nir_gt = 'data/R-G-B-NIR/Wheat/Test/NIR'
+    test_rgb = 'RGB-NIR-Fusion-Dataset/Wheat/Test/RGB'
+    test_nir_up = 'RGB-NIR-Fusion-Dataset/Wheat/Test/upscaled_images_32x'
+    test_nir_gt = 'RGB-NIR-Fusion-Dataset/Wheat/Test/NIR'
 
     weights_path = 'trained_weights/fused_model_wheat_32x.pth'
 
