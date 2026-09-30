@@ -29,8 +29,8 @@ class TriplePairedDataset(Dataset):
         nir_gt_path = os.path.join(self.nir_gt_dir, self.nir_gt_images[idx])
 
         rgb = Image.open(rgb_path).convert('RGB')
-        nir_up = Image.open(nir_up_path).convert('RGB')
-        nir_gt = Image.open(nir_gt_path).convert('RGB')
+        nir_up = Image.open(nir_up_path).convert('L')
+        nir_gt = Image.open(nir_gt_path).convert('L')
 
         if self.transform:
             rgb = self.transform(rgb)

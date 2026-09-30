@@ -1,5 +1,8 @@
 __pycache__
-arch
 results_fused
 *.sh
 *.out
+*.err
+papers
+.torch_cache
+/weights/*

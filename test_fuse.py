@@ -14,7 +14,8 @@ import torch.nn.functional as F
 from torchvision.utils import save_image
 from torchmetrics.functional import structural_similarity_index_measure
 
-from arch.fused_arch import MIRNetFused
+from arch.new_fused_arch import MIRNetFused
+from arch.fused_arch import MIRNetFused as LegacyMIRNetFused
 from dataloader_test import create_dataloaders
 
 
@@ -59,7 +60,7 @@ def calculate_ssim(img1, img2, max_pixel_value=1.0, gt_mean=False):
 # ============================================================
 # Validation / Test (save outputs + stats)
 # ============================================================
-def validate_and_save(model, dataloader, device, result_dir, force_png=True, gt_mean=False):
+def validate_and_save(model, dataloader, device, result_dir, legacy=False, force_png=True, gt_mean=False):
     model.eval()
 
     psnr_list = []
@@ -74,6 +75,10 @@ def validate_and_save(model, dataloader, device, result_dir, force_png=True, gt_
             rgb = rgb.to(device, non_blocking=True)
             nir_up = nir_up.to(device, non_blocking=True)
             nir_gt = nir_gt.to(device, non_blocking=True)
+
+            if legacy:
+                nir_up = nir_up.repeat(1, 3, 1, 1)
+                nir_gt = nir_gt.repeat(1, 3, 1, 1)
 
             out = model(rgb, nir_up)
             out = torch.clamp(out, 0, 1)
@@ -116,16 +121,27 @@ def validate_and_save(model, dataloader, device, result_dir, force_png=True, gt_
 # Main
 # ============================================================
 def main():
-    # ---- Paths
-    test_rgb = 'RGB-NIR-Fusion-Dataset/Wheat/Test/RGB'
-    test_nir_up = 'RGB-NIR-Fusion-Dataset/Wheat/Test/upscaled_images_32x'
-    test_nir_gt = 'RGB-NIR-Fusion-Dataset/Wheat/Test/NIR'
+    model_type = os.environ.get('MODEL_TYPE', 'new').lower()
+    if model_type not in ('new', 'legacy'):
+        raise ValueError("MODEL_TYPE must be 'new' or 'legacy'")
 
-    weights_path = 'trained_weights/fused_model_wheat_32x.pth'
+    legacy = model_type == 'legacy'
+
+    # ---- Paths
+    default_rgb = 'RGB-NIR-Fusion-Dataset/Wheat/Test/RGB' if legacy else 'RGB-NIR-Fusion-Dataset/Drybean/Test/RGB'
+    default_nir_up = 'RGB-NIR-Fusion-Dataset/Wheat/Test/upscaled_images_32x' if legacy else 'RGB-NIR-Fusion-Dataset/Drybean/Test/upscaled_images_8x'
+    default_nir_gt = 'RGB-NIR-Fusion-Dataset/Wheat/Test/NIR' if legacy else 'RGB-NIR-Fusion-Dataset/Drybean/Test/NIR'
+    default_weights = 'trained_weights/fused_model_wheat_32x.pth' if legacy else 'trained_weights/spectral_fused_drybean_updated_8x.pth'
+    default_result_dir = 'results_fused/legacy_wheat_32x' if legacy else 'results_fused/spectral_drybean_8x'
+
+    test_rgb = os.environ.get('TEST_RGB', default_rgb)
+    test_nir_up = os.environ.get('TEST_NIR_UP', default_nir_up)
+    test_nir_gt = os.environ.get('TEST_NIR_GT', default_nir_gt)
+    weights_path = os.environ.get('WEIGHTS_PATH', default_weights)
 
     # ---- Results directory
     dataset_name = os.path.basename(test_rgb.rstrip("/"))
-    result_dir = os.path.join("results_fused", dataset_name)
+    result_dir = os.environ.get('RESULT_DIR', default_result_dir)
 
     # ---- Device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -145,7 +161,7 @@ def main():
     print("Test loader size:", len(test_loader))
 
     # ---- Model
-    model = MIRNetFused().to(device).eval()
+    model = (LegacyMIRNetFused() if legacy else MIRNetFused()).to(device).eval()
 
     # ---- Load checkpoint (supports either {"state_dict": ...} or raw state_dict)
     ckpt = torch.load(weights_path, map_location="cpu")
@@ -159,6 +175,7 @@ def main():
         dataloader=test_loader,
         device=device,
         result_dir=result_dir,
+        legacy=legacy,
         force_png=True,   # save as 000001.png, ...
         gt_mean=False
     )

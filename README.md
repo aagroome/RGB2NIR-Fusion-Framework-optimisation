@@ -27,8 +27,7 @@ conda activate LYT_Torch
 ```bash
 
 conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
-pip install matplotlib scikit-learn scikit-image opencv-python yacs joblib natsort h5py tqdm tensorboard 
-pip install einops gdown addict future lmdb numpy pyyaml requests scipy yapf lpips thop timm torchmetrics
+pip install matplotlib scikit-learn scikit-image opencv-python yacs joblib natsort h5py tqdm tensorboard einops gdown addict future lmdb numpy pyyaml requests scipy yapf lpips thop timm torchmetrics
 
 ```
 

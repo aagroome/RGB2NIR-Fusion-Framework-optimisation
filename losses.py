@@ -14,6 +14,11 @@ class VGGPerceptualLoss(nn.Module):
             param.requires_grad = False
 
     def forward(self, y_true, y_pred):
+        if y_true.shape[1] == 1:
+            y_true = y_true.repeat(1, 3, 1, 1)
+        if y_pred.shape[1] == 1:
+            y_pred = y_pred.repeat(1, 3, 1, 1)
+
         y_true, y_pred = y_true.to(next(self.loss_model.parameters()).device), y_pred.to(next(self.loss_model.parameters()).device)
         return F.mse_loss(self.loss_model(y_true), self.loss_model(y_pred))
 

@@ -1,0 +1,44 @@
+{
+  "legacy_mirnet": {
+    "parameters": 1472304,
+    "flops": 253675342462,
+    "flops_g": 253.675342462,
+    "parameters_m": 1.472304,
+    "inference_ms": 65.61280517578125,
+    "inference_fps": 15.240927397036764,
+    "peak_memory_mb": 785.62890625,
+    "input_shape_rgb": [
+      1,
+      3,
+      512,
+      512
+    ],
+    "input_shape_nir": [
+      1,
+      3,
+      512,
+      512
+    ]
+  },
+  "spectral_lpienet": {
+    "parameters": 59012,
+    "flops": 7225212928,
+    "flops_g": 7.225212928,
+    "parameters_m": 0.059012,
+    "inference_ms": 14.005179850260417,
+    "inference_fps": 71.40215339551,
+    "peak_memory_mb": 418.0859375,
+    "input_shape_rgb": [
+      1,
+      3,
+      512,
+      512
+    ],
+    "input_shape_nir": [
+      1,
+      1,
+      512,
+      512
+    ]
+  }
+}

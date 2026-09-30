@@ -6,9 +6,9 @@ import torchvision.transforms as transforms
 from torchmetrics.functional import structural_similarity_index_measure
 import os
 
-from arch.fused_arch import MIRNetFused  # Use the fused model
+from arch.new_fused_arch import MIRNetFused
 from losses import CombinedLoss
-from dataloader_fuse import create_dataloaders  # Will modify this
+from dataloader_fuse import create_dataloaders
 import numpy as np
 import logging
 import sys
@@ -76,17 +76,17 @@ def main():
     )
 
     # === Your 3 input paths ===
-    train_rgb = 'data/R-G-B-NIR/Drybean/Train/RGB'
-    train_nir_up = 'data/R-G-B-NIR/Drybean/Train/NIR_upscaled_images_updated_8x'
-    train_nir_gt = 'data/R-G-B-NIR/Drybean/Train/NIR'
-    test_rgb = 'data/R-G-B-NIR/Drybean/Test/RGB'
-    test_nir_up = 'data/R-G-B-NIR/Drybean/Test/NIR_upscaled_images_updated_8x'
-    test_nir_gt = 'data/R-G-B-NIR/Drybean/Test/NIR'
+    train_rgb = 'RGB-NIR-Fusion-Dataset/Drybean/Train/RGB'
+    train_nir_up = 'RGB-NIR-Fusion-Dataset/Drybean/Train/upscaled_images_8x'
+    train_nir_gt = 'RGB-NIR-Fusion-Dataset/Drybean/Train/NIR'
+    test_rgb = 'RGB-NIR-Fusion-Dataset/Drybean/Test/RGB'
+    test_nir_up = 'RGB-NIR-Fusion-Dataset/Drybean/Test/upscaled_images_8x'
+    test_nir_gt = 'RGB-NIR-Fusion-Dataset/Drybean/Test/NIR'
 
-    learning_rate = 2e-4
-    num_epochs = 500
-    batch_size = 4
-    crop_size = 256
+    learning_rate = float(os.environ.get('LEARNING_RATE', '2e-4'))
+    num_epochs = int(os.environ.get('NUM_EPOCHS', '500'))
+    batch_size = int(os.environ.get('BATCH_SIZE', '4'))
+    crop_size = int(os.environ.get('CROP_SIZE', '256'))
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logging.info(f'LR: {learning_rate}; Epochs: {num_epochs}; Device: {device}')
@@ -135,7 +135,7 @@ def main():
 
         if avg_psnr > best_psnr:
             best_psnr = avg_psnr
-            model_path = 'trained_weights/fused_drybean_updated_8x.pth'
+            model_path = 'trained_weights/spectral_fused_drybean_updated_8x.pth'
             torch.save(model.state_dict(), model_path)
             logging.info(f'[SAVED] Model saved to {model_path} with PSNR: {best_psnr:.4f}')
 
