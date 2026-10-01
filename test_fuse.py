@@ -128,11 +128,11 @@ def main():
     legacy = model_type == 'legacy'
 
     # ---- Paths
-    default_rgb = 'RGB-NIR-Fusion-Dataset/Wheat/Test/RGB' if legacy else 'RGB-NIR-Fusion-Dataset/Drybean/Test/RGB'
-    default_nir_up = 'RGB-NIR-Fusion-Dataset/Wheat/Test/upscaled_images_32x' if legacy else 'RGB-NIR-Fusion-Dataset/Drybean/Test/upscaled_images_8x'
-    default_nir_gt = 'RGB-NIR-Fusion-Dataset/Wheat/Test/NIR' if legacy else 'RGB-NIR-Fusion-Dataset/Drybean/Test/NIR'
-    default_weights = 'trained_weights/fused_model_wheat_32x.pth' if legacy else 'trained_weights/spectral_fused_drybean_updated_8x.pth'
-    default_result_dir = 'results_fused/legacy_wheat_32x' if legacy else 'results_fused/spectral_drybean_8x'
+    default_rgb = 'RGB-NIR-Fusion-Dataset/Wheat/Test/RGB'
+    default_nir_up = 'RGB-NIR-Fusion-Dataset/Wheat/Test/upscaled_images_8x'
+    default_nir_gt = 'RGB-NIR-Fusion-Dataset/Wheat/Test/NIR'
+    default_weights = 'trained_weights/fused_model_wheat_8x.pth' if legacy else 'trained_weights/spectral_fused_wheat_updated_8x.pth'
+    default_result_dir = 'results_fused/legacy_wheat_8x' if legacy else 'results_fused/spectral_wheat_8x'
 
     test_rgb = os.environ.get('TEST_RGB', default_rgb)
     test_nir_up = os.environ.get('TEST_NIR_UP', default_nir_up)
