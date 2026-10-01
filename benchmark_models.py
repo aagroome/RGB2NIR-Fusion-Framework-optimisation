@@ -16,7 +16,7 @@ WARMUP = int(os.environ.get('BENCH_WARMUP', '10'))
 ITERATIONS = int(os.environ.get('BENCH_ITERATIONS', '30'))
 
 
-def measure(name, model, rgb, nir, checkpoint):
+def measure(name, model, rgb, nir, checkpoint, model_description, nir_channels):
     model = model.to(DEVICE).eval()
     state = torch.load(checkpoint, map_location='cpu')
     model.load_state_dict(state['state_dict'] if isinstance(state, dict) and 'state_dict' in state else state, strict=True)
@@ -43,6 +43,10 @@ def measure(name, model, rgb, nir, checkpoint):
         flops, params = profile(model, inputs=(rgb, nir), verbose=False)
 
     result = {
+        'model': model_description,
+        'checkpoint': checkpoint,
+        'rgb_channels': int(rgb.shape[1]),
+        'nir_channels': nir_channels,
         'parameters': int(params),
         'flops': int(flops),
         'flops_g': flops / 1e9,
@@ -66,12 +70,26 @@ def main():
     nir_3 = nir_1.repeat(1, 3, 1, 1)
 
     results = {
+        'experiment': {
+            'dataset': 'Drybean',
+            'split': 'Test',
+            'nir_mode': 'upscaled',
+            'nir_scale': '8x',
+            'input_resolution': [HEIGHT, WIDTH],
+            'batch_size': 1,
+            'warmup_iterations': WARMUP,
+            'timed_iterations': ITERATIONS,
+        },
         'legacy_mirnet': measure(
             'legacy_mirnet', LegacyMIRNetFused(), rgb, nir_3,
-            'trained_weights/fused_model_drybean_8x.pth'),
+            'trained_weights/fused_model_drybean_8x.pth',
+            'legacy MIRNet fusion',
+            3),
         'spectral_lpienet': measure(
             'spectral_lpienet', MIRNetFused(), rgb, nir_1,
-            'trained_weights/spectral_fused_drybean_updated_8x.pth'),
+            'trained_weights/spectral_fused_drybean_updated_8x.pth',
+            'SpectralLPIENet-style lightweight fusion',
+            1),
     }
     with open('benchmark_results.json', 'w') as handle:
         json.dump(results, handle, indent=2)
